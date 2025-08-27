@@ -10,8 +10,8 @@ import ShinyText from "@/blocks/TextAnimations/ShinyText/ShinyText";
 import Image from "next/image";
 // import SplashCursor from "@/blocks/Animations/SplashCursor/SplashCursor";
 // import GlareHover from "@/blocks/Animations/GlareHover/GlareHover";
-import LogoLoop from "@/blocks/Animations/LogoLoop/LogoLoop";
-import { SiNextdotjs, SiReact, SiTypescript, SiTailwindcss, SiBootstrap, SiHtml5, SiCss3, SiCplusplus, SiPython, SiJavascript, SiGithub, SiSwift } from "react-icons/si";
+import Logo from "@/components/logoloops";
+import List from "@/components/list";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -52,77 +52,16 @@ export default function Page() {
             </main>
         );
     }
-
-    const techLogos = [
-        { node: <SiReact />, title: "React", href: "https://react.dev" },
-
-        { node: <SiNextdotjs />, title: "Next.js", href: "https://nextjs.org" },
-
-        {
-            node: <SiTypescript />,
-            title: "TypeScript",
-            href: "https://www.typescriptlang.org",
-        },
-
-        {
-            node: <SiTailwindcss />,
-            title: "Tailwind CSS",
-            href: "https://tailwindcss.com",
-        },
-        {
-            node: <SiBootstrap />,
-            title: "Bootstrap",
-            href: "https://getbootstrap.com",
-        },
-        {
-            node: <SiHtml5 />,
-            title: "HTML5",
-            href: "https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5",
-        },
-        {
-            node: <SiCss3 />,
-            title: "CSS3",
-            href: "https://developer.mozilla.org/en-US/docs/Web/CSS",
-        },
-        {
-            node: <SiCplusplus />,
-            title: "C++",
-            href: "https://en.cppreference.com/w/",
-        },
-        {
-            node: <SiPython />,
-            title: "Python",
-            href: "https://www.python.org/",
-        },
-        {
-            node: <SiJavascript />,
-            title: "JavaScript",
-            href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
-        },
-        {
-            node: <SiGithub />,
-            title: "GitHub",
-            href: "https://github.com/",
-        },
-        {
-            node: <SiSwift />,
-            title: "Swift",
-            href: "https://developer.apple.com/swift/",
-        },
-    ];
-
     return (
         <main>
             <div className="w-screen h-screen flex flex-col items-center justify-center gap-8 bg-black text-white">
                 <Navbar />
-
-                {/* Toggle button for loader testing */}
-                <button
+                {/* <button
                     onClick={() => setShowLoader(!showLoader)}
                     className="absolute top-4 left-4 z-20 px-4 py-2 bg-white text-black rounded hover:bg-gray-200 text-sm"
                 >
                     Test Loader
-                </button>
+                </button> */}
 
                 <div className="w-screen h-screen relative">
                     <Galaxy
@@ -148,9 +87,9 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-            <div className="w-screen min-h-screen relative">
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="flex justify-center mt-20 text-5xl font-space-mono md:px-30 flex-row">
+            <div className="w-screen min-h-screen relative bg-black" id="about">
+                <div className="relative z-10 pointer-events-auto">
+                    <div className="flex justify-center pt-20 text-5xl font-space-mono md:px-30 flex-row">
                         <div className="flex-col">
                             <div className="flex flex-row max-w-200">
                                 <RotatingText
@@ -203,7 +142,7 @@ export default function Page() {
                                     disabled={false}
                                     speed={3}
                                 />
-                                <div className="max-w-200 mt-5 text-lg leading-loose">
+                                <div className="max-w-200 mt-5 text-lg leading-loose text-white">
                                     <p className="">
                                         I love making stuff that people actually
                                         want to use.
@@ -249,7 +188,7 @@ export default function Page() {
                                 </div>
                             </div>
                         </div>
-                        <div className="min-h-full flex my-auto justify-center items-center float-end">
+                        <div className="h-fit flex my-auto justify-center items-center float-end">
                             <Image
                                 src="/icon.png"
                                 alt="Profile placeholder"
@@ -259,66 +198,19 @@ export default function Page() {
                             />
                         </div>
                     </div>
-                    <div className="px-30 flex items-center justify-center mt-20 flex-col w-full h-fit text-4xl font-space-mono">
+                    <div className="px-30 flex items-center justify-center mt-20 flex-col w-full h-auto text-4xl font-space-mono">
                         <ShinyText
                             text="Technologies I work with:"
                             disabled={false}
                             speed={3}
                         />
-                        <div className="mt-10 h-300 w-225 flex gap-5 flex-col">
-                            <LogoLoop
-                                logos={techLogos}
-                                speed={60}
-                                direction="left"
-                                logoHeight={48}
-                                gap={40}
-                                pauseOnHover
-                                scaleOnHover
-                                fadeOut
-                                fadeOutColor="#000000"
-                                ariaLabel="Technology partners"
-                            />
-                            <LogoLoop
-                                logos={techLogos}
-                                speed={60}
-                                direction="right"
-                                logoHeight={48}
-                                gap={40}
-                                pauseOnHover
-                                scaleOnHover
-                                fadeOut
-                                fadeOutColor="#000000"
-                                ariaLabel="Technology partners"
-                            />
-                            <LogoLoop
-                                logos={techLogos}
-                                speed={60}
-                                direction="left"
-                                logoHeight={48}
-                                gap={40}
-                                pauseOnHover
-                                scaleOnHover
-                                fadeOut
-                                fadeOutColor="#000000"
-                                ariaLabel="Technology partners"
-                            />
-                            <LogoLoop
-                                logos={techLogos}
-                                speed={60}
-                                direction="right"
-                                logoHeight={48}
-                                gap={40}
-                                pauseOnHover
-                                scaleOnHover
-                                fadeOut
-                                fadeOutColor="#000000"
-                                ariaLabel="Technology partners"
-                            />
-                        </div>
+                        <Logo />
                     </div>
                 </div>
             </div>
-            {/* <SplashCursor /> */}
+            <div className="px-30 flex items-center justify-center mt-20 flex-col w-full h-fit text-4xl font-space-mono">
+                <List />
+            </div>
         </main>
     );
 }

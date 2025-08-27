@@ -13,6 +13,7 @@
     "@react-three/fiber": "^9.3.0",
     "@react-three/rapier": "^2.1.0",
     "gsap": "^3.13.0",
+    "lenis": "^1.3.9",
     "mathjs": "^14.6.0",
     "meshline": "^3.3.1",
     "motion": "^12.23.12",
