@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Figtree, Space_Mono, Roboto_Condensed, Antonio } from "next/font/google";
 import "./globals.css";
 
+
 const figtree = Figtree({
     variable: "--font-figtree",
     subsets: ["latin"],
@@ -37,7 +38,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={` ${figtree.variable} ${spaceMono.variable} ${antonio.variable} ${robotoCondensed.variable} antialiased`}>
+            <body
+                className={` ${figtree.variable} ${spaceMono.variable} ${antonio.variable} ${robotoCondensed.variable} antialiased`}
+            >
                 {children}
             </body>
         </html>

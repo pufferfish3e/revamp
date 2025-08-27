@@ -35,6 +35,8 @@ interface LanyardProps {
     gravity?: [number, number, number];
     fov?: number;
     transparent?: boolean;
+    cardScale?: number;
+    onLoad?: () => void; // New callback for when assets are loaded
 }
 
 export default function Lanyard({
@@ -42,9 +44,11 @@ export default function Lanyard({
     gravity = [0, -40, 0],
     fov = 20,
     transparent = true,
+    cardScale = 1,
+    onLoad, // New onLoad prop
 }: LanyardProps) {
     return (
-        <div className="relative z-0 w-full h-screen flex justify-center items-center transform scale-100 origin-center">
+        <div className="relative z-0 w-full h-full">
             <Canvas
                 camera={{ position, fov }}
                 gl={{ alpha: transparent }}
@@ -57,7 +61,7 @@ export default function Lanyard({
             >
                 <ambientLight intensity={Math.PI} />
                 <Physics gravity={gravity} timeStep={1 / 60}>
-                    <Band />
+                    <Band cardScale={cardScale} onLoad={onLoad} />
                 </Physics>
                 <Environment blur={0.75}>
                     <Lightformer
@@ -97,9 +101,16 @@ export default function Lanyard({
 interface BandProps {
     maxSpeed?: number;
     minSpeed?: number;
+    cardScale?: number;
+    onLoad?: () => void;
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
+function Band({
+    maxSpeed = 50,
+    minSpeed = 0,
+    cardScale = 1,
+    onLoad,
+}: BandProps) {
     // Using "any" for refs since the exact types depend on Rapier's internals
     const band = useRef<any>(null);
     const fixed = useRef<any>(null);
@@ -123,6 +134,12 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
 
     const { nodes, materials } = useGLTF(cardGLB) as any;
     const texture = useTexture(lanyard.src);
+    useEffect(() => {
+        if (nodes && materials && texture && onLoad) {
+            onLoad();
+        }
+    }, [nodes, materials, texture, onLoad]);
+
     const [curve] = useState(
         () =>
             new THREE.CatmullRomCurve3([
@@ -182,36 +199,149 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
                 z: vec.z - dragged.z,
             });
         }
-        if (fixed.current) {
-            [j1, j2].forEach((ref) => {
-                if (!ref.current.lerped)
-                    ref.current.lerped = new THREE.Vector3().copy(
-                        ref.current.translation()
+        if (
+            fixed.current &&
+            j1.current &&
+            j2.current &&
+            j3.current &&
+            card.current &&
+            band.current?.geometry
+        ) {
+            // Get translations and validate they're not NaN
+            const fixedTranslation = fixed.current.translation();
+            const j1Translation = j1.current.translation();
+            const j2Translation = j2.current.translation();
+            const j3Translation = j3.current.translation();
+
+            // Only proceed if all translations are valid numbers
+            if (
+                fixedTranslation &&
+                !isNaN(fixedTranslation.x) &&
+                !isNaN(fixedTranslation.y) &&
+                !isNaN(fixedTranslation.z) &&
+                j1Translation &&
+                !isNaN(j1Translation.x) &&
+                !isNaN(j1Translation.y) &&
+                !isNaN(j1Translation.z) &&
+                j2Translation &&
+                !isNaN(j2Translation.x) &&
+                !isNaN(j2Translation.y) &&
+                !isNaN(j2Translation.z) &&
+                j3Translation &&
+                !isNaN(j3Translation.x) &&
+                !isNaN(j3Translation.y) &&
+                !isNaN(j3Translation.z)
+            ) {
+                [j1, j2].forEach((ref) => {
+                    if (!ref.current.lerped)
+                        ref.current.lerped = new THREE.Vector3().copy(
+                            ref.current.translation()
+                        );
+
+                    // Validate that lerped position is valid
+                    const currentTranslation = ref.current.translation();
+                    if (
+                        isNaN(currentTranslation.x) ||
+                        isNaN(currentTranslation.y) ||
+                        isNaN(currentTranslation.z)
+                    ) {
+                        return; // Skip this iteration if translation is invalid
+                    }
+
+                    // Validate lerped position before using it
+                    if (
+                        isNaN(ref.current.lerped.x) ||
+                        isNaN(ref.current.lerped.y) ||
+                        isNaN(ref.current.lerped.z)
+                    ) {
+                        ref.current.lerped.copy(currentTranslation); // Reset to current position
+                    }
+
+                    const clampedDistance = Math.max(
+                        0.1,
+                        Math.min(
+                            1,
+                            ref.current.lerped.distanceTo(currentTranslation)
+                        )
                     );
-                const clampedDistance = Math.max(
-                    0.1,
-                    Math.min(
-                        1,
-                        ref.current.lerped.distanceTo(ref.current.translation())
-                    )
-                );
-                ref.current.lerped.lerp(
-                    ref.current.translation(),
-                    delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed))
-                );
-            });
-            curve.points[0].copy(j3.current.translation());
-            curve.points[1].copy(j2.current.lerped);
-            curve.points[2].copy(j1.current.lerped);
-            curve.points[3].copy(fixed.current.translation());
-            band.current.geometry.setPoints(curve.getPoints(32));
-            ang.copy(card.current.angvel());
-            rot.copy(card.current.rotation());
-            card.current.setAngvel({
-                x: ang.x,
-                y: ang.y - rot.y * 0.25,
-                z: ang.z,
-            });
+                    ref.current.lerped.lerp(
+                        currentTranslation,
+                        delta *
+                            (minSpeed + clampedDistance * (maxSpeed - minSpeed))
+                    );
+                });
+
+                // Validate lerped positions before using them
+                const j1Lerped = j1.current.lerped;
+                const j2Lerped = j2.current.lerped;
+
+                if (
+                    !j1Lerped ||
+                    !j2Lerped ||
+                    isNaN(j1Lerped.x) ||
+                    isNaN(j1Lerped.y) ||
+                    isNaN(j1Lerped.z) ||
+                    isNaN(j2Lerped.x) ||
+                    isNaN(j2Lerped.y) ||
+                    isNaN(j2Lerped.z)
+                ) {
+                    return; // Skip this frame if lerped positions are invalid
+                }
+
+                // Update curve points with validated positions
+                curve.points[0].copy(j3Translation);
+                curve.points[1].copy(j2Lerped);
+                curve.points[2].copy(j1Lerped);
+                curve.points[3].copy(fixedTranslation);
+
+                // Get curve points and validate them before setting
+                try {
+                    const curvePoints = curve.getPoints(32);
+                    if (
+                        curvePoints.length > 0 &&
+                        curvePoints.every(
+                            (point) =>
+                                point &&
+                                typeof point.x === "number" &&
+                                typeof point.y === "number" &&
+                                typeof point.z === "number" &&
+                                !isNaN(point.x) &&
+                                !isNaN(point.y) &&
+                                !isNaN(point.z) &&
+                                isFinite(point.x) &&
+                                isFinite(point.y) &&
+                                isFinite(point.z)
+                        )
+                    ) {
+                        band.current.geometry.setPoints(curvePoints);
+                    }
+                } catch (error) {
+                    console.warn("Error updating curve geometry:", error);
+                }
+
+                // Validate angular velocity and rotation before setting
+                const angvel = card.current.angvel();
+                const rotation = card.current.rotation();
+
+                if (
+                    angvel &&
+                    rotation &&
+                    !isNaN(angvel.x) &&
+                    !isNaN(angvel.y) &&
+                    !isNaN(angvel.z) &&
+                    !isNaN(rotation.x) &&
+                    !isNaN(rotation.y) &&
+                    !isNaN(rotation.z)
+                ) {
+                    ang.copy(angvel);
+                    rot.copy(rotation);
+                    card.current.setAngvel({
+                        x: ang.x,
+                        y: ang.y - rot.y * 0.25,
+                        z: ang.z,
+                    });
+                }
+            }
         }
     });
 
@@ -279,25 +409,27 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
                             );
                         }}
                     >
-                        <mesh geometry={nodes.card.geometry}>
-                            <meshPhysicalMaterial
-                                map={materials.base.map}
-                                map-anisotropy={16}
-                                clearcoat={1}
-                                clearcoatRoughness={0.15}
-                                roughness={0.9}
-                                metalness={0.8}
+                        <group scale={cardScale}>
+                            <mesh geometry={nodes.card.geometry}>
+                                <meshPhysicalMaterial
+                                    map={materials.base.map}
+                                    map-anisotropy={16}
+                                    clearcoat={1}
+                                    clearcoatRoughness={0.15}
+                                    roughness={0.9}
+                                    metalness={0.8}
+                                />
+                            </mesh>
+                            <mesh
+                                geometry={nodes.clip.geometry}
+                                material={materials.metal}
+                                material-roughness={0.3}
                             />
-                        </mesh>
-                        <mesh
-                            geometry={nodes.clip.geometry}
-                            material={materials.metal}
-                            material-roughness={0.3}
-                        />
-                        <mesh
-                            geometry={nodes.clamp.geometry}
-                            material={materials.metal}
-                        />
+                            <mesh
+                                geometry={nodes.clamp.geometry}
+                                material={materials.metal}
+                            />
+                        </group>
                     </group>
                 </RigidBody>
             </group>
