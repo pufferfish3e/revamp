@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+
+
 @theme {
     --animate-shine: shine 5s linear infinite;
+    --animate-marquee: marquee 15s linear infinite;
+    --translate-101: 101%;
+    --breakpoint-lg: 1280px;
+    --breakpoint-md: 1024px;
 }
+
+
 
 @keyframes shine {
     0% {
@@ -11,6 +19,16 @@
 
     100% {
         background-position: -100%;
+    }
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0%);
+    }
+
+    to {
+        transform: translateX(-50%);
     }
 }
 
@@ -49,5 +67,23 @@
 
     .font-roboto-condensed {
         font-family: var(--font-roboto-condensed), sans-serif;
+    }
+
+    /* Mobile dock positioning fix for all browsers */
+    .mobile-dock-container {
+        position: fixed !important;
+        bottom: 16px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 9999 !important;
+        width: auto !important;
+        height: auto !important;
+        pointer-events: auto !important;
+        will-change: transform;
+    }
+
+    .mobile-dock-inner {
+        position: relative !important;
+        display: flex !important;
     }
 }

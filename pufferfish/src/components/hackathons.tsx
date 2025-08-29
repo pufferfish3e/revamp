@@ -15,7 +15,7 @@ export default function Hackathons() {
 
             gradient: "linear-gradient(180deg, #7DDA58, #000000)",
 
-            url: "https://www.linkedin.com/posts/mambuwu_sieberrsec-ctf-activity-7353066634606989316-2sl1?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFljRKIB1V6Ef39HHSBhTfIoyCNTuGqcWwI",
+            url: "https://sieberr.live/",
         },
 
         {
@@ -31,7 +31,7 @@ export default function Hackathons() {
 
             gradient: "linear-gradient(180deg, #10B981, #000000)",
 
-            url: "https://linkedin.com/in/mikechen",
+            url: "https://lagncra.sh/",
         },
 
         {

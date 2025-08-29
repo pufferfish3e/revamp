@@ -9,7 +9,7 @@ export default function Projects() {
 
             title: "Percepta",
 
-            description: "This is pretty cool, right?",
+            description: "A lightweight, portable camera with inbuilt machine learning offering aid for the visually impaired.",
         },
 
         {
@@ -19,7 +19,7 @@ export default function Projects() {
 
             title: "Powerpoint Generator",
 
-            description: "This is pretty cool, right?",
+            description: "A python application that generates customized powerpoint slides spontaneously.",
         },
 
         {
@@ -29,7 +29,7 @@ export default function Projects() {
 
             title: "PracticeMe Automation",
 
-            description: "This is pretty cool, right?",
+            description: "A fun automation tool written with selenium to rack up points from programming exercises.",
         },
 
         {
@@ -39,12 +39,12 @@ export default function Projects() {
 
             title: "Portfolio Website",
 
-            description: "This is pretty cool, right?",
+            description: "A portfolio website for my uncle, a Web Designer.",
         },
     ];
 
     return (
-        <div className="relative w-screen h-screen">
+        <div className="relative w-screen h-[80vh] md:h-screen">
             <InfiniteMenu items={items} />
         </div>
     );

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import GooeyNav from "@/blocks/Components/GooeyNav/GooeyNav";
 
 export default function Navbar() {
@@ -12,7 +12,7 @@ export default function Navbar() {
         { label: "Contact", href: "#contact" },
     ];
     return (
-        <div className="mt-5 font-space-mono fixed top-0 z-50">
+        <div className="mt-5 font-space-mono fixed top-0 z-50 hidden md:block">
             <GooeyNav
                 items={items}
                 particleCount={30}
@@ -24,5 +24,5 @@ export default function Navbar() {
                 colors={[1, 2, 3, 1, 2, 3, 1, 4]}
             />
         </div>
-    );  
+    );
 }

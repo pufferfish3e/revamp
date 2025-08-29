@@ -1272,6 +1272,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
     useEffect(() => {
         const checkIsMobile = () => {
             setIsMobile(window.innerWidth < 1024);
+            setIsMobile(window.innerWidth < 1200);
         };
 
         checkIsMobile();
@@ -1360,7 +1361,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
                                 }
                                 ${
                                     isMobile
-                                        ? "max-w-[80vw]"
+                                        ? "max-w-none w-screen"
                                         : "max-w-[40vw] lg:max-w-[35vw] xl:max-w-[30vw]"
                                 }
                                 transition-all
@@ -1385,7 +1386,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
                         absolute pointer-events-auto
                         ${
                             isMobile
-                                ? "bottom-30 left-1/2 transform -translate-x-1/2 text-center"
+                                ? "bottom-0 left-1/2 transform -translate-x-1/2 text-center"
                                 : "right-0 top-1/2 transform -translate-y-1/2 text-right"
                         }
                         p-4 md:p-6 lg:p-8
@@ -1402,7 +1403,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
                                 ${
                                     isMobile
                                         ? "max-w-[80vw]"
-                                        : "max-w-[40vw] lg:max-w-[35vw] xl:max-w-[30vw]"
+                                        : "max-w-[80vw] lg:max-w-[25vw] xl:max-w-[15vw]"
                                 }
                                 transition-all
                                 ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
@@ -1419,9 +1420,16 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
                     </div>
                 )}
 
-                {/* Button - Bottom Center */}
+                {/* Button - Bottom Center (Desktop) / Top Center (Mobile/Tablet) */}
                 {activeItem && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 pb-6 md:pb-8 lg:pb-10 pointer-events-auto">
+                    <div className={`
+                        absolute pointer-events-auto
+                        ${
+                            isMobile
+                                ? "top-4 left-1/2 transform -translate-x-1/2 pt-6 md:pt-8"
+                                : "bottom-0 left-1/2 transform -translate-x-1/2 pb-6 md:pb-8 lg:pb-10"
+                        }
+                    `}>
                         <div
                             onClick={handleButtonClick}
                             className={`
@@ -1433,7 +1441,7 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
                                 }
                                 grid
                                 place-items-center
-                                bg-[#00ffff]
+                                bg-[#ff0000]
                                 border-[5px]
                                 border-black
                                 rounded-full
