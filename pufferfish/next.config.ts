@@ -13,9 +13,19 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: 'https',
-                hostname: 'placehold.co',
-                pathname: '/**',
+                protocol: "https",
+                hostname: "placehold.co",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "i.pravatar.cc",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "picsum.photos",
+                pathname: "/**",
             },
         ],
     },

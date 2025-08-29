@@ -7,23 +7,21 @@ export default function Navbar() {
 
         { label: "About", href: "#about" },
 
-        { label: "Projects", href: "#" },
+        { label: "Projects", href: "#projects" },
 
-        { label: "Contact", href: "#" },
+        { label: "Contact", href: "#contact" },
     ];
     return (
-        <div
-            className="mt-5 font-space-mono fixed top-0 z-50"
-        >
+        <div className="mt-5 font-space-mono fixed top-0 z-50">
             <GooeyNav
                 items={items}
-                particleCount={20}
+                particleCount={30}
                 particleDistances={[80, 10]}
                 particleR={80}
                 initialActiveIndex={0}
                 animationTime={500}
                 timeVariance={200}
-                colors={[1, 4, 3, 1, 6, 3, 1, 4]}
+                colors={[1, 2, 3, 1, 2, 3, 1, 4]}
             />
         </div>
     );  

@@ -2,7 +2,7 @@
 	Installed from https://reactbits.dev/ts/tailwind/
 */
 
-/* eslint-disable react/no-unknown-property */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Canvas, extend, useFrame } from "@react-three/fiber";
@@ -143,10 +143,10 @@ function Band({
     const [curve] = useState(
         () =>
             new THREE.CatmullRomCurve3([
-                new THREE.Vector3(),
-                new THREE.Vector3(),
-                new THREE.Vector3(),
-                new THREE.Vector3(),
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0.5, 0, 0),
+                new THREE.Vector3(1, 0, 0),
+                new THREE.Vector3(1.5, 0, 0),
             ])
     );
     const [dragged, drag] = useState<false | THREE.Vector3>(false);
@@ -294,14 +294,40 @@ function Band({
                 curve.points[2].copy(j1Lerped);
                 curve.points[3].copy(fixedTranslation);
 
+                // Additional validation: ensure curve points themselves are valid
+                const curvePointsValid = curve.points.every(
+                    (point) =>
+                        point &&
+                        !isNaN(point.x) &&
+                        !isNaN(point.y) &&
+                        !isNaN(point.z) &&
+                        isFinite(point.x) &&
+                        isFinite(point.y) &&
+                        isFinite(point.z)
+                );
+
+                if (!curvePointsValid) {
+                    console.warn(
+                        "Invalid curve points detected, skipping frame"
+                    );
+                    return;
+                }
+
                 // Get curve points and validate them before setting
                 try {
                     const curvePoints = curve.getPoints(32);
+
+                    // Additional safety check: ensure we have points and they're all valid
                     if (
-                        curvePoints.length > 0 &&
+                        curvePoints &&
+                        Array.isArray(curvePoints) &&
+                        curvePoints.length === 33 && // getPoints(32) should return 33 points
                         curvePoints.every(
                             (point) =>
                                 point &&
+                                point.hasOwnProperty("x") &&
+                                point.hasOwnProperty("y") &&
+                                point.hasOwnProperty("z") &&
                                 typeof point.x === "number" &&
                                 typeof point.y === "number" &&
                                 typeof point.z === "number" &&
@@ -310,10 +336,27 @@ function Band({
                                 !isNaN(point.z) &&
                                 isFinite(point.x) &&
                                 isFinite(point.y) &&
-                                isFinite(point.z)
+                                isFinite(point.z) &&
+                                Math.abs(point.x) < 10000 && // Reasonable bounds check
+                                Math.abs(point.y) < 10000 &&
+                                Math.abs(point.z) < 10000
                         )
                     ) {
-                        band.current.geometry.setPoints(curvePoints);
+                        // Double-check the geometry exists and has the setPoints method
+                        if (
+                            band.current &&
+                            band.current.geometry &&
+                            typeof band.current.geometry.setPoints ===
+                                "function"
+                        ) {
+                            band.current.geometry.setPoints(curvePoints);
+                        }
+                    } else {
+                        console.warn("Invalid curve points generated:", {
+                            pointsLength: curvePoints?.length,
+                            firstPoint: curvePoints?.[0],
+                            lastPoint: curvePoints?.[curvePoints?.length - 1],
+                        });
                     }
                 } catch (error) {
                     console.warn("Error updating curve geometry:", error);
@@ -434,7 +477,9 @@ function Band({
                 </RigidBody>
             </group>
             <mesh ref={band}>
+                {/* @ts-expect-error MeshLine components extended via R3F extend() */}
                 <meshLineGeometry />
+                {/* @ts-expect-error MeshLine components extended via R3F extend() */}
                 <meshLineMaterial
                     color="white"
                     depthTest={false}

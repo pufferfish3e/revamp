@@ -72,7 +72,7 @@ export default function Logo() {
         },
     ];
     return (
-        <div className="mt-10 h-fit w-225 flex gap-5 flex-col">
+        <div className="mt-15 h-fit w-225 flex gap-5 flex-col">
             <LogoLoop
                 logos={techLogos}
                 speed={60}
